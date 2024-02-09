@@ -89,7 +89,7 @@ class SongsDataset(Dataset):
         #scaler = MinMaxScaler()
         #song_np = scaler.fit_transform(song_df.values)
 
-        song_df['pitch'] = song_df['pitch'].astype(int)
+        song_df.loc[:, 'pitch'] = song_df['pitch'].astype(int)
         song_tensor = torch.tensor(song_df.values, dtype=torch.float32)
 
         return song_tensor

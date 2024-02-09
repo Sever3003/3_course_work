@@ -55,10 +55,10 @@ def midi_to_notes(midi_file: str) -> pd.DataFrame:
         note_name = pretty_midi.note_number_to_name(note.pitch)
         #notes['note_name'].append(note_name)
         notes['pitch'].append(note.pitch)
-        notes['start'].append(start)
-        notes['end'].append(end)
+        notes['start'].append(start) # лучше закомментить, чтобы не было лин зависимости
+        notes['end'].append(end)  # лучше закомментить, чтобы не было лин зависимости
         notes['step'].append(start - prev_start)
-        notes['duration'].append(end - start)  # лучше закомментить, чтобы не было лин зависимости
+        notes['duration'].append(end - start)
         prev_start = start
 
     return pd.DataFrame({name: np.array(value) for name, value in notes.items()})
@@ -92,3 +92,21 @@ def notes_to_midi(
     pm.instruments.append(instrument)
     pm.write(out_file)
     return pm
+
+    
+def recover_end_and_start(df_generated) -> pd.DataFrame:
+    notes = collections.defaultdict(list)
+    now_time = 0
+    
+    for index, note in df_generated.iterrows():
+        notes['pitch'].append(note.pitch)
+        notes['step'].append(note.step)
+        notes['duration'].append(note.duration)
+        
+        now_time = now_time + note.step
+        
+        notes['start'].append(now_time)
+        notes['end'].append(now_time + note.duration)
+        
+
+    return pd.DataFrame({name: np.array(value) for name, value in notes.items()})
